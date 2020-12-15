@@ -27,8 +27,8 @@ namespace PingBotCS.Modules
                     .WithDescription("In this message you can see some information about yourself!")
                     .WithColor(new Color(33, 176, 252))
                     .AddField("User ID", Context.User.Id, true)
-                    .AddField("Created at", Context.User.CreatedAt.ToString("dd/MM/yyyy"), true)
-                    .AddField("Joined at", (Context.User as SocketGuildUser).JoinedAt.Value.ToString("dd/MM/yyyy"), true)
+                    .AddField("Created at", Context.User.CreatedAt.ToString("MM/dd/yyyy"), true)
+                    .AddField("Joined at", (Context.User as SocketGuildUser).JoinedAt.Value.ToString("MM/dd/yyyy"), true)
                     .AddField("Roles", string.Join(" ", (Context.User as SocketGuildUser).Roles.Select(x => x.Mention)))
                     .WithCurrentTimestamp();
                 var embed = builder.Build();
@@ -41,8 +41,8 @@ namespace PingBotCS.Modules
                     .WithDescription("In this message you can see some information about yourself!")
                     .WithColor(new Color(33, 176, 252))
                     .AddField("User ID", user.Id, true)
-                    .AddField("Created at", user.CreatedAt.ToString("dd/MM/yyyy"), true)
-                    .AddField("Joined at", user.JoinedAt.Value.ToString("dd/MM/yyyy"), true)
+                    .AddField("Created at", user.CreatedAt.ToString("MM/dd/yyyy"), true)
+                    .AddField("Joined at", user.JoinedAt.Value.ToString("MM/dd/yyyy"), true)
                     .AddField("Roles", string.Join(" ", user.Roles.Select(x => x.Mention)))
                     .WithCurrentTimestamp();
                 var embed = builder.Build();
@@ -70,7 +70,7 @@ namespace PingBotCS.Modules
                 .WithDescription("In this message you can find some nice information about the current server.")
                 .WithTitle($"{Context.Guild.Name} Information")
                 .WithColor(new Color(33, 176, 252))
-                .AddField("Created at", Context.Guild.CreatedAt.ToString("dd/MM/yyyy"), true)
+                .AddField("Created at", Context.Guild.CreatedAt.ToString("MM/dd/yyyy"), true)
                 .AddField("Membercount", (Context.Guild as SocketGuild).MemberCount + " members", true)
                 .AddField("Online users", (Context.Guild as SocketGuild).Users.Where(x => x.Status != UserStatus.Offline).Count() + " members", true);
             var embed = builder.Build();
