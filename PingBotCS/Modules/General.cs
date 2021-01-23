@@ -12,9 +12,10 @@ namespace PingBotCS.Modules
 {
     public class General : ModuleBase
     {
-        private Embed createInfoEmbed(ulong id, DateTimeOffset createdAt, DateTimeOffset joinedAt, IEnumerable<SocketRole> roles) {
+        private Embed CreateInfoEmbed(ulong id, DateTimeOffset createdAt, DateTimeOffset joinedAt, string avatarUrl, IEnumerable<SocketRole> roles)
+        {
             return new EmbedBuilder()
-                .WithThumbnailUrl(Context.User.GetAvatarUrl() ?? Context.User.GetDefaultAvatarUrl())
+                .WithThumbnailUrl(avatarUrl)
                 .WithDescription("In this message you can see some information about yourself!")
                 .WithColor(new Color(33, 176, 252))
                 .AddField("User ID", id, true)
@@ -41,7 +42,7 @@ namespace PingBotCS.Modules
                 user = Context.User as SocketGuildUser;
             }
 
-            embed = createInfoEmbed(user.Id, user.CreatedAt, user.JoinedAt.Value, user.Roles);
+            embed = CreateInfoEmbed(user.Id, user.CreatedAt, user.JoinedAt.Value, user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl(), user.Roles);
             await Context.Channel.SendMessageAsync(null, false, embed);
         }
 
@@ -82,7 +83,8 @@ namespace PingBotCS.Modules
             await message.DeleteAsync();
             var voiceChannels = await Context.Guild.GetVoiceChannelsAsync();
 
-            var userList = voiceChannels.Select(async channel => await channel.GetUsersAsync().FlattenAsync())
+            var userList = voiceChannels
+                .Select(async channel => await channel.GetUsersAsync().FlattenAsync())
                 .Select(t => t.Result)
                 .Aggregate(new List<IGuildUser>(), (acc, rhs) => acc.Concat(rhs).ToList());
 
