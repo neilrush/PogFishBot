@@ -77,28 +77,20 @@ namespace PingBotCS.Modules
             var embed = builder.Build();
             await Context.Channel.SendMessageAsync(null, false, embed);
         }
+
         [Command("roulette")]
         [RequireUserPermission(GuildPermission.MoveMembers)]
-        public async Task Roulette()
-        {
+        public async Task Roulette() {
             await Context.Guild.DownloadUsersAsync();
             var message = await Context.Channel.SendMessageAsync("Kicking random user (who will it be :O)...");
             await Task.Delay(1000);
-            List<IGuildUser> userList = new List<IGuildUser>();
+
             await message.DeleteAsync();
             var voiceChannels = await Context.Guild.GetVoiceChannelsAsync();
-            foreach (IVoiceChannel channel in voiceChannels)
-            {
-                var users = await channel.GetUsersAsync().FlattenAsync();
-                foreach (IGuildUser user in users)
-                {
-                    if (user != null)
-                    {
-                        userList.Add(user);
-                    }
-                }
 
-            }
+            var userList = voiceChannels.Select(async channel => await channel.GetUsersAsync().FlattenAsync())
+                .Select(t => t.Result)
+                .Aggregate(new List<IGuildUser>(), (acc, rhs) => acc.Concat(rhs).ToList());
 
             Random randomNumber = new Random();
             IGuildUser unluckyUser = userList[randomNumber.Next(userList.Count)];
