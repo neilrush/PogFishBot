@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Discord.Audio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace PingBotCS.Modules
                     .WithCurrentTimestamp();
                 var embed = builder.Build();
                 await Context.Channel.SendMessageAsync(null, false, embed);
-            } 
+            }
             else
             {
                 var builder = new EmbedBuilder()
@@ -57,7 +58,7 @@ namespace PingBotCS.Modules
             var messages = await Context.Channel.GetMessagesAsync(amount + 1).FlattenAsync();
             await (Context.Channel as SocketTextChannel).DeleteMessagesAsync(messages);
 
-            var message = await Context.Channel.SendMessageAsync($"{messages.Count()} messages deleted successfuly!");
+            var message = await Context.Channel.SendMessageAsync($"{messages.Count()} messages deleted successfully!");
             await Task.Delay(2500);
             await message.DeleteAsync();
         }
@@ -75,6 +76,36 @@ namespace PingBotCS.Modules
                 .AddField("Online users", (Context.Guild as SocketGuild).Users.Where(x => x.Status != UserStatus.Offline).Count() + " members", true);
             var embed = builder.Build();
             await Context.Channel.SendMessageAsync(null, false, embed);
+        }
+        [Command("roulette")]
+        [RequireUserPermission(GuildPermission.MoveMembers)]
+        public async Task Roulette()
+        {
+            await Context.Guild.DownloadUsersAsync();
+            var message = await Context.Channel.SendMessageAsync("Kicking random user (who will it be :O)...");
+            await Task.Delay(1000);
+            List<IGuildUser> userList = new List<IGuildUser>();
+            await message.DeleteAsync();
+            var voiceChannels = await Context.Guild.GetVoiceChannelsAsync();
+            foreach (IVoiceChannel channel in voiceChannels)
+            {
+                var users = await channel.GetUsersAsync().FlattenAsync();
+                foreach (IGuildUser user in users)
+                {
+                    if (user != null)
+                    {
+                        userList.Add(user);
+                    }
+                }
+
+            }
+
+            Random randomNumber = new Random();
+            IGuildUser unluckyUser = userList[randomNumber.Next(userList.Count)];
+            await unluckyUser.ModifyAsync(x => x.Channel = null);
+            message = await Context.Channel.SendMessageAsync($"{unluckyUser.Nickname} has been chosen...");
+            await Task.Delay(1000);
+            await message.DeleteAsync();
         }
     }
 }
