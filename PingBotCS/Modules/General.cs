@@ -34,16 +34,15 @@ namespace PingBotCS.Modules
         [Command("info")]
         public async Task Info(SocketGuildUser user = null)
         {
+            Embed embed;
+
             if (user == null)
             {
-                var embed = createInfoEmbed(Context.User.Id, Context.User.CreatedAt, (Context.User as SocketGuildUser).JoinedAt.Value, (Context.User as SocketGuildUser).Roles);
-                await Context.Channel.SendMessageAsync(null, false, embed);
+                user = Context.User as SocketGuildUser;
             }
-            else
-            {
-                var embed = createInfoEmbed(user.Id, user.CreatedAt, user.JoinedAt.Value, user.Roles);
-                await Context.Channel.SendMessageAsync(null, false, embed);
-            }
+
+            embed = createInfoEmbed(user.Id, user.CreatedAt, user.JoinedAt.Value, user.Roles);
+            await Context.Channel.SendMessageAsync(null, false, embed);
         }
 
         [Command("purge")]
