@@ -12,6 +12,19 @@ namespace PingBotCS.Modules
 {
     public class General : ModuleBase
     {
+        private Embed createInfoEmbed(ulong id, DateTimeOffset createdAt, DateTimeOffset joinedAt, IEnumerable<SocketRole> roles) {
+            return new EmbedBuilder()
+                .WithThumbnailUrl(Context.User.GetAvatarUrl() ?? Context.User.GetDefaultAvatarUrl())
+                .WithDescription("In this message you can see some information about yourself!")
+                .WithColor(new Color(33, 176, 252))
+                .AddField("User ID", id, true)
+                .AddField("Created at", createdAt.ToString("MM/dd/yyyy"), true)
+                .AddField("Joined at", joinedAt.ToString("MM/dd/yyyy"), true)
+                .AddField("Roles", string.Join(" ", roles.Select(x => x.Mention)))
+                .WithCurrentTimestamp()
+                .Build();
+        }
+
         [Command("ping")]
         public async Task Ping()
         {
@@ -23,30 +36,12 @@ namespace PingBotCS.Modules
         {
             if (user == null)
             {
-                var builder = new EmbedBuilder()
-                    .WithThumbnailUrl(Context.User.GetAvatarUrl() ?? Context.User.GetDefaultAvatarUrl())
-                    .WithDescription("In this message you can see some information about yourself!")
-                    .WithColor(new Color(33, 176, 252))
-                    .AddField("User ID", Context.User.Id, true)
-                    .AddField("Created at", Context.User.CreatedAt.ToString("MM/dd/yyyy"), true)
-                    .AddField("Joined at", (Context.User as SocketGuildUser).JoinedAt.Value.ToString("MM/dd/yyyy"), true)
-                    .AddField("Roles", string.Join(" ", (Context.User as SocketGuildUser).Roles.Select(x => x.Mention)))
-                    .WithCurrentTimestamp();
-                var embed = builder.Build();
+                var embed = createInfoEmbed(Context.User.Id, Context.User.CreatedAt, (Context.User as SocketGuildUser).JoinedAt.Value, (Context.User as SocketGuildUser).Roles);
                 await Context.Channel.SendMessageAsync(null, false, embed);
             }
             else
             {
-                var builder = new EmbedBuilder()
-                    .WithThumbnailUrl(user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
-                    .WithDescription("In this message you can see some information about yourself!")
-                    .WithColor(new Color(33, 176, 252))
-                    .AddField("User ID", user.Id, true)
-                    .AddField("Created at", user.CreatedAt.ToString("MM/dd/yyyy"), true)
-                    .AddField("Joined at", user.JoinedAt.Value.ToString("MM/dd/yyyy"), true)
-                    .AddField("Roles", string.Join(" ", user.Roles.Select(x => x.Mention)))
-                    .WithCurrentTimestamp();
-                var embed = builder.Build();
+                var embed = createInfoEmbed(user.Id, user.CreatedAt, user.JoinedAt.Value, user.Roles);
                 await Context.Channel.SendMessageAsync(null, false, embed);
             }
         }
