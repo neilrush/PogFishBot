@@ -12,6 +12,19 @@ namespace PingBotCS.Modules
 {
     public class General : ModuleBase
     {
+        private Embed createInfoEmbed(ulong id, DateTimeOffset createdAt, DateTimeOffset joinedAt, IEnumerable<SocketRole> roles) {
+            return new EmbedBuilder()
+                .WithThumbnailUrl(Context.User.GetAvatarUrl() ?? Context.User.GetDefaultAvatarUrl())
+                .WithDescription("In this message you can see some information about yourself!")
+                .WithColor(new Color(33, 176, 252))
+                .AddField("User ID", id, true)
+                .AddField("Created at", createdAt.ToString("MM/dd/yyyy"), true)
+                .AddField("Joined at", joinedAt.ToString("MM/dd/yyyy"), true)
+                .AddField("Roles", string.Join(" ", roles.Select(x => x.Mention)))
+                .WithCurrentTimestamp()
+                .Build();
+        }
+
         [Command("ping")]
         public async Task Ping()
         {
@@ -21,34 +34,15 @@ namespace PingBotCS.Modules
         [Command("info")]
         public async Task Info(SocketGuildUser user = null)
         {
+            Embed embed;
+
             if (user == null)
             {
-                var builder = new EmbedBuilder()
-                    .WithThumbnailUrl(Context.User.GetAvatarUrl() ?? Context.User.GetDefaultAvatarUrl())
-                    .WithDescription("In this message you can see some information about yourself!")
-                    .WithColor(new Color(33, 176, 252))
-                    .AddField("User ID", Context.User.Id, true)
-                    .AddField("Created at", Context.User.CreatedAt.ToString("MM/dd/yyyy"), true)
-                    .AddField("Joined at", (Context.User as SocketGuildUser).JoinedAt.Value.ToString("MM/dd/yyyy"), true)
-                    .AddField("Roles", string.Join(" ", (Context.User as SocketGuildUser).Roles.Select(x => x.Mention)))
-                    .WithCurrentTimestamp();
-                var embed = builder.Build();
-                await Context.Channel.SendMessageAsync(null, false, embed);
+                user = Context.User as SocketGuildUser;
             }
-            else
-            {
-                var builder = new EmbedBuilder()
-                    .WithThumbnailUrl(user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
-                    .WithDescription("In this message you can see some information about yourself!")
-                    .WithColor(new Color(33, 176, 252))
-                    .AddField("User ID", user.Id, true)
-                    .AddField("Created at", user.CreatedAt.ToString("MM/dd/yyyy"), true)
-                    .AddField("Joined at", user.JoinedAt.Value.ToString("MM/dd/yyyy"), true)
-                    .AddField("Roles", string.Join(" ", user.Roles.Select(x => x.Mention)))
-                    .WithCurrentTimestamp();
-                var embed = builder.Build();
-                await Context.Channel.SendMessageAsync(null, false, embed);
-            }
+
+            embed = createInfoEmbed(user.Id, user.CreatedAt, user.JoinedAt.Value, user.Roles);
+            await Context.Channel.SendMessageAsync(null, false, embed);
         }
 
         [Command("purge")]
@@ -77,28 +71,20 @@ namespace PingBotCS.Modules
             var embed = builder.Build();
             await Context.Channel.SendMessageAsync(null, false, embed);
         }
+
         [Command("roulette")]
         [RequireUserPermission(GuildPermission.MoveMembers)]
-        public async Task Roulette()
-        {
+        public async Task Roulette() {
             await Context.Guild.DownloadUsersAsync();
             var message = await Context.Channel.SendMessageAsync("Kicking random user (who will it be :O)...");
             await Task.Delay(1000);
-            List<IGuildUser> userList = new List<IGuildUser>();
+
             await message.DeleteAsync();
             var voiceChannels = await Context.Guild.GetVoiceChannelsAsync();
-            foreach (IVoiceChannel channel in voiceChannels)
-            {
-                var users = await channel.GetUsersAsync().FlattenAsync();
-                foreach (IGuildUser user in users)
-                {
-                    if (user != null)
-                    {
-                        userList.Add(user);
-                    }
-                }
 
-            }
+            var userList = voiceChannels.Select(async channel => await channel.GetUsersAsync().FlattenAsync())
+                .Select(t => t.Result)
+                .Aggregate(new List<IGuildUser>(), (acc, rhs) => acc.Concat(rhs).ToList());
 
             Random randomNumber = new Random();
             IGuildUser unluckyUser = userList[randomNumber.Next(userList.Count)];
