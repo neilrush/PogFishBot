@@ -1,3 +1,3 @@
 prefix: '!'
 tokens:
-	discord: 'YourTokenHere'
+    discord: 'YourTokenHere'
