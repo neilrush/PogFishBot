@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PingBotCS": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
