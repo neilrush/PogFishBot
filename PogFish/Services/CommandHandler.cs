@@ -8,7 +8,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 
-namespace Template.Services
+namespace PogFish.Services
 {
     public class CommandHandler : InitializedService
     {

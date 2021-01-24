@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PingBotCS.Modules
+namespace PogFish.Modules
 {
     public class Moderation : ModuleBase
     {

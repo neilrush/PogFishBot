@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PogFishInfrastructure", "PogFishInfrastructure\PogFishInfrastructure.csproj", "{BFF8842C-5C2F-4301-A8B2-539D5B63113D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PogFIsh", "PogFish\PogFIsh.csproj", "{E1FB7B6D-E9CC-4782-8B7A-E7D3E7FE6133}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFF8842C-5C2F-4301-A8B2-539D5B63113D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFF8842C-5C2F-4301-A8B2-539D5B63113D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFF8842C-5C2F-4301-A8B2-539D5B63113D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFF8842C-5C2F-4301-A8B2-539D5B63113D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1FB7B6D-E9CC-4782-8B7A-E7D3E7FE6133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1FB7B6D-E9CC-4782-8B7A-E7D3E7FE6133}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1FB7B6D-E9CC-4782-8B7A-E7D3E7FE6133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1FB7B6D-E9CC-4782-8B7A-E7D3E7FE6133}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E0F86F8-694B-45D1-8124-A58AA250907D}
+	EndGlobalSection
+EndGlobal
