@@ -28,16 +28,31 @@ namespace PingBotCS.Services
         public async Task StartAsync()
         {
             string token = _config["tokens:discord"];
-            if(string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
             {
                 Console.WriteLine("Please provide your Discord token in _config.yml");
                 return;
             }
+            try
+            {
+                await _discord.LoginAsync(TokenType.Bot, token);
 
-            await _discord.LoginAsync(TokenType.Bot, token);
-            await _discord.StartAsync();
 
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
+                await _discord.StartAsync();
+
+                await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
+            }
+            catch (Discord.Net.HttpException exception)
+            {
+                if (exception.Message.Contains("Unauthorized"))
+                {
+                    Console.WriteLine("Error: Incorrect API key or no key!\nStopping!");
+                }
+                else
+                {
+                    throw exception;
+                }
+            }
         }
     }
 }

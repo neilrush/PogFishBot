@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PingBotCS.Modules
 {
-    class Moderation : ModuleBase
+    public class Moderation : ModuleBase
     {
         [Command("purge")]
         [RequireUserPermission(GuildPermission.ManageMessages)]

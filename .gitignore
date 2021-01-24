@@ -341,3 +341,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 PingBotCS/_config.yml
+/PingBotCS/Properties/ServiceDependencies/PogFishBot - Web Deploy
