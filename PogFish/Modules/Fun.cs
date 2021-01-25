@@ -8,10 +8,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using PogFishInfrastructure;
+// ReSharper disable UnusedMember.Global
 
 namespace PogFish.Modules
 {
-    public class Fun : ModuleBase
+    public class Fun : PogFishCommandBase
     {
         [Command("meme")]
         [Alias("reddit")]
@@ -60,6 +63,10 @@ namespace PogFish.Modules
             message = await Context.Channel.SendMessageAsync($"{unluckyUser.Nickname} has been chosen...");
             await Task.Delay(1000);
             await message.DeleteAsync();
+        }
+
+        protected Fun(ILogger<PogFishCommandBase> logger, Servers servers) : base(logger, servers)
+        {
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Addons.Hosting;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -10,20 +7,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PogFish.Services;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using PogFishInfrastructure;
 
 namespace PogFish
 {
-    class Program
+    public static class Program
     {
         private const string ConfigPath = "appsettings.json";
 
-        static async Task Main()
+        public static async Task Main()
         {
             var builder = new HostBuilder()
-                .ConfigureAppConfiguration(config =>
-                {
-                    GenerateConfig(config);
-                })
+                .ConfigureAppConfiguration(GenerateConfig)
                 .ConfigureLogging(console =>
                 {
                     console.AddConsole();
@@ -48,7 +46,9 @@ namespace PogFish
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddHostedService<CommandHandler>();
+                    services.AddHostedService<CommandHandler>()
+                        .AddDbContext<PogFishContext>()
+                        .AddSingleton<Servers>();
                 })
                 .UseConsoleLifetime();
 
@@ -56,12 +56,15 @@ namespace PogFish
             using (host)
             {
                 await host.RunAsync();
+
+
             }
         }
 
         private static void ValidateApiToken(HostBuilderContext context, DiscordHostConfiguration config)
         {
             config.Token = context.Configuration["token"];
+
         }
 
         private static void GenerateConfig(IConfigurationBuilder config)
@@ -75,12 +78,12 @@ namespace PogFish
 
                 config.AddConfiguration(configuration);
             }
-            catch (System.IO.FileNotFoundException)
+            catch (FileNotFoundException)
             {
                 Console.BackgroundColor = ConsoleColor.DarkYellow;
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.WriteLine("Warning: Config file missing! Creating Default.");
-                string defaultConfig = "{\n  \"prefix\": \"!\",\n  \"token\": \"yourtoken\"\n}";
+                string defaultConfig = "{\n  \"prefix\": \"!\",\n  \"token\": \"yourToken\"\n}";
                 File.WriteAllText(ConfigPath, defaultConfig);
                 Path.GetFullPath(ConfigPath);
                 Console.WriteLine("New config file at:\n " + Path.GetFullPath(ConfigPath));

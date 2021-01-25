@@ -6,21 +6,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using PogFishInfrastructure;
+// ReSharper disable UnusedMember.Global
 
 namespace PogFish.Modules
 {
-    public class Moderation : ModuleBase
+    public class Moderation : PogFishCommandBase
     {
+        [Command("prefix")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Prefix(string prefix = null)
+        {
+            if (prefix == null)
+            {
+                prefix = await Servers.GetGuildPrefix(Context.Guild.Id);
+                var message = await Context.Channel.SendMessageAsync("Current command prefix is: " + prefix);
+                DeleteMessageAfterTimeoutAsync(2500,message);
+            }
+            else
+            {
+
+            }
+
+        }
         [Command("purge")]
         [RequireUserPermission(GuildPermission.ManageMessages)]
         public async Task Purge(int amount)
         {
-            var messages = await Context.Channel.GetMessagesAsync(amount + 1).FlattenAsync();
-            await (Context.Channel as SocketTextChannel).DeleteMessagesAsync(messages);
+            var messages = (await Context.Channel.GetMessagesAsync(amount + 1).FlattenAsync()).ToList();
+            await ((SocketTextChannel) Context.Channel).DeleteMessagesAsync(messages);
 
             var message = await Context.Channel.SendMessageAsync($"{messages.Count()} messages deleted successfully!");
-            await Task.Delay(2500);
-            await message.DeleteAsync();
+            
+        }
+
+        public Moderation(ILogger<PogFishCommandBase> logger, Servers servers) : base(logger, servers)
+        {
         }
     }
 }
