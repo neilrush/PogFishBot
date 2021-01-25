@@ -55,7 +55,20 @@ namespace PogFish
             var host = builder.Build();
             using (host)
             {
-                await host.RunAsync();
+                try
+                {
+                    await host.RunAsync();
+                }
+                catch (Microsoft.Extensions.Options.OptionsValidationException ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Exception: " + ex.Message);
+                    Console.WriteLine("Caused by invalid discord token. Are you sure your token was correct?");
+                    Console.WriteLine("Deleting " + ConfigPath + "!");
+                    //File.Delete(ConfigPath);
+                    Console.ResetColor();
+                }
 
 
             }
@@ -82,12 +95,33 @@ namespace PogFish
             {
                 Console.BackgroundColor = ConsoleColor.DarkYellow;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Warning: Config file missing! Creating Default.");
-                string defaultConfig = "{\n  \"prefix\": \"!\",\n  \"token\": \"yourToken\"\n}";
+                Console.WriteLine("Warning: Config file missing or invalid! Creating Default.");
+                Console.Write("Please input your discord bot token: ");
+                string token = Console.ReadLine();
+                Console.Write("Please input the sql server address: ");
+                string sqlServer = Console.ReadLine();
+                Console.Write("Database name: ");
+                string databaseName = Console.ReadLine();
+                Console.Write("Username: ");
+                string username = Console.ReadLine();
+                Console.Write("Password: ");
+                string password = Console.ReadLine();
+                string defaultConfig = "{" +
+                                       "\n  \"prefix\": \"!\"," +
+                                       "\n  \"token\": \"" + token + "\"," +
+                                       "\n  \"mysql\":" +
+                                       "\n  {" +
+                                       "\n    \"username\": \"" + username + "\"," +
+                                       "\n    \"password\": \"" + password + "\"," +
+                                       "\n    \"server\": \"" + sqlServer + "\"," +
+                                       "\n    \"database\": \"" + databaseName + "\"" +
+                                       "\n  }" +
+                                       "\n}";
                 File.WriteAllText(ConfigPath, defaultConfig);
                 Path.GetFullPath(ConfigPath);
                 Console.WriteLine("New config file at:\n " + Path.GetFullPath(ConfigPath));
                 Console.ResetColor();
+                GenerateConfig(config);
             }
         }
     }

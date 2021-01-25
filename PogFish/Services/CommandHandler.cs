@@ -41,7 +41,7 @@ namespace PogFish.Services
             if (message.Source != MessageSource.User) return;
 
             var argPos = 0;
-            var prefix = await _servers.GetGuildPrefix((message.Channel as IGuildChannel).Id) ?? _config["prefix"];
+            var prefix = await _servers.GetGuildPrefix((message.Channel as IGuildChannel).Guild.Id) ?? _config["prefix"];
             if (!message.HasStringPrefix(prefix, ref argPos) && !message.HasMentionPrefix(_client.CurrentUser, ref argPos)) return;
 
             var context = new SocketCommandContext(_client, message);

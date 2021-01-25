@@ -14,8 +14,18 @@ using PogFishInfrastructure;
 
 namespace PogFish.Modules
 {
-    public class Fun : PogFishCommandBase
+    public class Fun : ModuleBase<ICommandContext>
     {
+        private readonly ILogger<Fun> _logger;
+        private readonly Servers _servers;
+
+
+        public Fun(ILogger<Fun> logger, Servers servers)
+        {
+            _logger = logger;
+            _servers = servers;
+        }
+
         [Command("meme")]
         [Alias("reddit")]
         public async Task Meme(string subreddit = null)
@@ -63,10 +73,6 @@ namespace PogFish.Modules
             message = await Context.Channel.SendMessageAsync($"{unluckyUser.Nickname} has been chosen...");
             await Task.Delay(1000);
             await message.DeleteAsync();
-        }
-
-        protected Fun(ILogger<PogFishCommandBase> logger, Servers servers) : base(logger, servers)
-        {
         }
     }
 }

@@ -7,14 +7,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PogFishInfrastructure;
 // ReSharper disable UnusedMember.Global
 
 namespace PogFish.Modules
 {
-    public class General : PogFishCommandBase
+    public class General : ModuleBase<ICommandContext>
     {
+        private readonly ILogger<General> _logger;
+        private readonly Servers _servers;
+        private readonly IConfiguration _config;
+
+
+        public General(ILogger<General> logger, Servers servers, IConfiguration config)
+        {
+            _logger = logger;
+            _servers = servers;
+            _config = config;
+        }
         [Command("ping")]
         public async Task Ping()
         {
@@ -59,8 +71,5 @@ namespace PogFish.Modules
             await Context.Channel.SendMessageAsync(null, false, embed);
         }
 
-        protected General(ILogger<PogFishCommandBase> logger, Servers servers) : base(logger, servers)
-        {
-        }
     }
 }
